@@ -1,0 +1,34 @@
+
+
+#title {
+
+	text-align: center;
+	
+	background-color: silver;
+
+
+.header-image {
+	margin: auto;
+	margin-bottom: 25px;
+}
+
+.panel-primary {
+	border-radius: 4px;
+	border: solid thin #666666;
+	margin-top: 30px;
+}
+
+.panel-title {
+	margin-left: 10px;
+}
+
+
+.form-group {
+	padding: 10px;
+}
+
+
+.panel-heading {
+	background-color: black;
+	color: #FFFFFF;
+}
