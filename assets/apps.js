@@ -11,26 +11,59 @@ firebase.initializeApp(config);
 
 var database = firebase.database();
 
+
+// fired when the page loads and anytime a child is added
+database.ref().on("child_added", function (childSnapshot) {
+
+  let train = childSnapshot.val();
+  console.log(train);
+  let freq = train.frequency;
+  // // console.log(freq);
+  
+  let arrTime = train.start.split(':');
+
+  // let firstTrain = moment().hours(arrTime[0]).minutes(arrTime[1]);
+  // console.log(firstTrain);
+  let start = train.start;
+
+
+
+// current time
+  let currentTime = moment();
+  console.log('Current Time:' + currentTime.format('k:mm:ss'))
+
+  let next = moment().add(freq, 'minutes').format('k:mm:ss');
+  console.log(next);
+  // var startDateFormat = moment.unix(train.start).format('MM/DD/YY');
+
+
+  $('tbody').append('<tr><td>' + train.name + '</td><td>' 
+  + train.destination + '</td><td>' + freq + '</td><td>' + next + '</td><td>' + 'ff' + '</td></tr>');
+});
+
+
 //click the button
-$('#add-button').on('click', function(event){
+$('#add-button').on('click', function (event) {
   event.preventDefault();
 
   //find all of the values
-  var trainName =  $('#train-name').val().trim();
+  var trainName = $('#train-name').val().trim();
+
   var destination = $('#destination').val().trim();
   var start = $('#first-train').val().trim()
   //converts the javascript date format into a unix code  
-  var unixStart = moment(start, 'YYYY/MM/DD').format('X');
-  var frequencyInput =  $('#frequency').val().trim();
-  
-  
+  // var unixStart = moment(start, 'YYYY/MM/DD').format('X');
+  var frequencyInput = parseInt($('#frequency').val().trim());
+
+
 
   //push them to firebase
-    database.ref().push({
+  database.ref().push({
     name: trainName,
     destination: destination,
-    start: unixStart,
+    start: start,
     frequency: frequencyInput,
+    minutesAway
     // dateAdded: firebase.ServerValue.TIMESTAMP
   });
 
@@ -41,14 +74,3 @@ $('#add-button').on('click', function(event){
   $('#frequency').val('');
 
 });
-
-database.ref().on("child_added", function(childSnapshot) {
-
-  //takes the unix code date and converts it back to mm/dd/yy
-  var startDateFormat = moment.unix(childSnapshot.val().start).format('MM/DD/YY');
-  //calculates the difference between today and the start date and return the number of months
-  var months = moment().diff(moment.unix(childSnapshot.val().start, 'X'), 'months');
-  var billed = months * childSnapshot.val().rate;
-
-  $('.table').append('<tr><td>' + childSnapshot.val().name + '</td><td>' + childSnapshot.val().role + '</td><td>' + startDateFormat + '</td><td>' + months + '</td><td>' + childSnapshot.val().rate + '</td><td>' + billed + '</td></tr>');
-});                                                                                                                                                                                             
